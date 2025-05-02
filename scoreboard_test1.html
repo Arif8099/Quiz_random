@@ -437,6 +437,9 @@
               }
               const scores = await response.json(); // Assuming API returns JSON like [{rank: 1, name: 'UserA', score: 9}, ...]
 
+              // --- DEBUG: Log the actual data received from the API ---
+              console.log("API Response Data:", JSON.stringify(scores, null, 2));
+
               // --- MOCK DATA (Remove this block when using real API) ---
               // const scores = [
               //     { name: 'Participant1234', totalQuestions: 10, correctAnswers: 6, userAnswers: ['Human','Ai','Human','Ai','Human','Ai','Human','Ai','Human','Human'], actualAnswers: ['Human','Human','Human','Human','Human','Human','Ai','Ai','Ai','Ai'] },
