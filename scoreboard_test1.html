@@ -371,8 +371,9 @@
 
           resultsHtml += `</ul>`; // Close the list
 
-          // Add the Scoreboard button
+          // Add the Scoreboard button and the scoreboard display div
           resultsHtml += `<button id="scoreboard-btn" style="margin-top: 20px;">Show Scoreboard</button>`;
+          resultsHtml += `<div id="scoreboard-display" style="display:none;"></div>`;
           resultDiv.innerHTML = resultsHtml;
       }
 
@@ -418,7 +419,7 @@
 
       // --- Function to Fetch and Display Scoreboard ---
       async function fetchScoreboard() {
-          const scoreboardDisplay = document.getElementById('scoreboard-display');
+          const scoreboardDisplay = resultDiv.querySelector('#scoreboard-display');
           const scoreboardButton = document.getElementById('scoreboard-btn');
           scoreboardButton.textContent = 'Loading...'; // Indicate loading
           scoreboardButton.disabled = true;
