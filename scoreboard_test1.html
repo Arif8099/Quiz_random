@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome To HIG Innovation Quiz</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 0; /* Add padding for scroll */
+    }
+    .quiz-box {
+      background: #fff;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+      border-radius: 18px;
+      padding: 32px 28px 28px 28px;
+      max-width: 450px; /* Slightly wider for results */
+      width: 90%; /* Responsive width */
+      border: none;
+      position: relative;
+      animation: fadeIn 1s;
+      margin: 20px auto; /* Center and add margin */
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h2 {
+      color: #1e3c72;
+      margin-bottom: 18px;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+    /* --- Styles for User Info Section --- */
+    #user-info {
+        text-align: center;
+    }
+    #user-info button {
+       display: inline-block;
+       width: auto;
+    }
+    /* --- End Styles for User Info Section --- */
+
+    #quiz-area {
+      margin-bottom: 10px;
+    }
+    audio {
+      width: 100%;
+      margin-bottom: 18px;
+      border-radius: 8px;
+      background: #f0f4fa;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #answer-form {
+       margin-top: 10px;
+    }
+    .answer-row {
+      display: flex;
+      flex-direction: row;
+      gap: 18px;
+      justify-content: center;
+      margin-bottom: 10px;
+      width: 100%;
+    }
+    .answer-row label {
+      background: #f0f4fa;
+      color: #1e3c72;
+      border-radius: 8px;
+      padding: 10px 24px;
+      margin: 0;
+      font-size: 1.1em;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+      border: 2px solid transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-grow: 1;
+      text-align: center;
+    }
+
+    input[type="radio"] {
+      opacity: 0;
+      position: absolute;
+      width: 0;
+      height: 0;
+    }
+
+    label {
+      color: #1e3c72;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    button {
+      background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 32px;
+      font-size: 1.1em;
+      font-weight: 600;
+      margin-top: 16px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(30,60,114,0.08);
+      transition: background 0.2s, transform 0.1s;
+      width: auto;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #2a5298 0%, #1e3c72 100%);
+      transform: translateY(-2px) scale(1.03);
+    }
+    #progress {
+      margin-top: 12px;
+      color: #2a5298;
+      font-weight: 500;
+      text-align: center;
+    }
+    .result {
+      font-size: 1.0em; /* Slightly smaller to fit more text */
+      line-height: 1.5;
+      color: #333; /* Darker text for better readability on white */
+      background: #fff; /* Keep results on white background */
+      border-radius: 12px;
+      padding: 18px 25px;
+      text-align: center;
+      margin-top: 18px;
+      box-shadow: 0 2px 12px rgba(30,60,114,0.10);
+      letter-spacing: 0.5px;
+    }
+    /* --- Styles for Detailed Results --- */
+    .result-details {
+        list-style: none; /* Remove default bullets */
+        padding: 0;
+        margin-top: 20px;
+        text-align: left; /* Align text left within list items */
+    }
+    .result-details li {
+        padding: 8px 12px;
+        margin-bottom: 8px;
+        border-radius: 6px;
+        border-left-width: 5px;
+        border-left-style: solid;
+        font-size: 0.95em; /* Slightly smaller font for details */
+        line-height: 1.4;
+    }
+    .result-details .correct-answer {
+        background-color: #e6ffed; /* Lighter green */
+        color: #0a5c25; /* Darker green text */
+        border-left-color: #28a745; /* Bootstrap success green */
+    }
+    .result-details .wrong-answer {
+        background-color: #fff0f1; /* Lighter red */
+        color: #a01325; /* Darker red text */
+        border-left-color: #dc3545; /* Bootstrap danger red */
+    }
+    .result-details li strong { /* Style the labels like Your/Correct */
+        display: inline-block;
+        min-width: 110px; /* Adjust as needed for alignment */
+        font-weight: 600;
+    }
+     .result-details li .filename { /* Style for filename */
+        display: block; /* Put filename on its own line */
+        font-size: 0.85em;
+        color: #555;
+        margin-bottom: 4px;
+        word-break: break-all; /* Prevent long filenames from overflowing */
+    }
+    /* --- Styles for Scoreboard --- */
+    #scoreboard-display {
+        margin-top: 25px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+    }
+    #scoreboard-display h3 {
+        text-align: center;
+        color: #1e3c72;
+        margin-bottom: 15px;
+    }
+    #scoreboard-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9em;
+    }
+    #scoreboard-table th, #scoreboard-table td {
+        border: 1px solid #ddd;
+        padding: 8px 10px;
+        text-align: left;
+    }
+    #scoreboard-table th {
+        background-color: #f0f4fa;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-box">
+    <!-- User Info Section (Simplified) -->
+    <div id="user-info">
+      <h2>Welcome To HIG Innovation Quiz</h2>
+      <button id="start-quiz-btn">Start Quiz</button>
+    </div>
+
+    <!-- Quiz Area (Initially Hidden) -->
+    <div id="quiz-area" style="display:none;">
+      <audio id="audio" controls></audio>
+      <form id="answer-form">
+        <div class="answer-row">
+          <label>
+            <input type="radio" name="answer" value="human" required>
+            <span>Human</span>
+          </label>
+          <label>
+            <input type="radio" name="answer" value="ai" required>
+            <span>AI</span>
+          </label>
+        </div>
+        <button type="submit">Submit Answer</button>
+      </form>
+      <div id="progress"></div>
+    </div>
+
+    <!-- Result Area (Initially Hidden) -->
+    <div id="result" class="result" style="display:none;">
+        <!-- Content generated by JS -->
+        <div id="scoreboard-display" style="display:none;"></div> <!-- Container for scoreboard -->
+    </div>
+  </div>
+
+    <script>
+      // List your audio files here (S3 URLs)
+      const audioFiles = [
+        'https://voicefilename.s3.us-east-1.amazonaws.com/random_quiz_voices/AI+7.mp3',
+        'https://voicefilename.s3.us-east-1.amazonaws.com/random_quiz_voices/AI+5.mp3',
+        'https://voicefilename.s3.us-east-1.amazonaws.com/random_quiz_voices/AI+2.mp3',
+        'https://voicefilename.s3.us-east-1.amazonaws.com/random_quiz_voices/Human+(2).mp3',
+        'https://voicefilename.s3.us-east-1.amazonaws.com/random_quiz_voices/Human+(7).mp3',
+        'https://voicefilename.s3.us-east-1.amazonaws.com/random_quiz_voices/Human+(1).mp3',
+        'https://voicefilename.s3.us-east-1.amazonaws.com/random_quiz_voices/Human+(6).mp3',
+        'https://voicefilename.s3.us-east-1.amazonaws.com/random_quiz_voices/Human+(5).mp3',
+        'https://voicefilename.s3.us-east-1.amazonaws.com/random_quiz_voices/Human+(4).mp3',
+        'https://voicefilename.s3.us-east-1.amazonaws.com/random_quiz_voices/Human+(3).mp3',
+        // Add more files as needed
+      ];
+
+      // --- Fisher-Yates (Knuth) Shuffle Function ---
+      function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+      }
+
+      // --- Shuffle the audio files array ---
+      shuffleArray(audioFiles);
+
+      let current = 0;
+      let correct = 0;
+      let anonymousUserId = '';
+      let userAnswers = []; // <--- Array to store detailed answers
+
+      // Get DOM Elements
+      const audio = document.getElementById('audio');
+      const answerForm = document.getElementById('answer-form');
+      const resultDiv = document.getElementById('result');
+      const quizArea = document.getElementById('quiz-area');
+      const progress = document.getElementById('progress');
+      const userInfoDiv = document.getElementById('user-info');
+      const startQuizBtn = document.getElementById('start-quiz-btn');
+      const answerLabels = answerForm.querySelectorAll('.answer-row label');
+
+      // --- Event Listener for Start Quiz Button ---
+      startQuizBtn.onclick = function() {
+        anonymousUserId = 'Participant' + Math.floor(Math.random() * 10000);
+        userAnswers = []; // Reset answers if quiz is restarted
+        correct = 0;      // Reset score
+        current = 0;      // Reset question index
+        userInfoDiv.style.display = 'none';
+        quizArea.style.display = 'block';
+        resultDiv.style.display = 'none'; // Hide results if restarting
+        loadQuestion();
+      };
+
+      // --- Function to Load Question ---
+      function loadQuestion() {
+        if (current < audioFiles.length) {
+          audio.src = audioFiles[current];
+          audio.load();
+          answerForm.reset();
+          answerLabels.forEach(label => {
+              label.style.backgroundColor = '#f0f4fa';
+              label.style.color = '#1e3c72';
+              label.style.borderColor = 'transparent';
+          });
+          progress.textContent = `Question ${current + 1} of ${audioFiles.length}`;
+        } else {
+          displayResults();
+        }
+      }
+
+      // --- Event Listener for Answer Form ---
+      answerForm.onsubmit = function(e) {
+        e.preventDefault();
+        const selectedAnswer = answerForm.querySelector('input[name="answer"]:checked');
+        if (!selectedAnswer) {
+            alert("Please select an answer.");
+            return;
+        }
+        const userAnswer = selectedAnswer.value;
+        const filename = audioFiles[current];
+        const baseFilename = filename.substring(filename.lastIndexOf('/') + 1);
+        let isHuman = baseFilename.toLowerCase().includes('human');
+        let isAI = baseFilename.toLowerCase().includes('ai');
+        let correctAnswer = isHuman ? 'human' : (isAI ? 'ai' : ''); // Default to '' if neither found
+
+        const isUserCorrect = (userAnswer === correctAnswer);
+
+        // Store the result for this question
+        userAnswers.push({
+            questionIndex: current,
+            audioFile: filename, // Store full path or just baseFilename
+            userAnswer: userAnswer,
+            correctAnswer: correctAnswer,
+            isCorrect: isUserCorrect
+        });
+
+        if (isUserCorrect) {
+            correct++;
+        }
+
+        current++;
+        loadQuestion();
+      };
+
+      // --- Function to Display Final Results ---
+      function displayResults() {
+          quizArea.style.display = 'none';
+          resultDiv.style.display = 'block';
+
+          let resultsHtml = `
+              <h2>Quiz Finished!</h2>
+              <p><strong>User:</strong> ${anonymousUserId}</p>
+              <p><strong>Final Score:</strong> ${correct} out of ${audioFiles.length}</p>
+              <hr>
+              <h3>Detailed Results:</h3>
+              <ul class="result-details">`; // Use the new class
+
+          userAnswers.forEach((answerDetail, index) => {
+              const resultClass = answerDetail.isCorrect ? 'correct-answer' : 'wrong-answer';
+              const statusText = answerDetail.isCorrect ? 'Correct' : 'Wrong';
+              const displayFilename = answerDetail.audioFile.substring(answerDetail.audioFile.lastIndexOf('/') + 1); // Show only filename
+
+              resultsHtml += `
+                  <li class="${resultClass}">
+                      <span class="filename">Q${index + 1}: </span>
+                      <strong>Your Answer:</strong> ${answerDetail.userAnswer.toUpperCase()}<br>
+                      <strong>Correct Answer:</strong> ${answerDetail.correctAnswer.toUpperCase()}
+                      <!-- Optional: Add status text -->
+                      <!-- <br><strong>Status:</strong> ${statusText} -->
+                  </li>`;
+          });
+
+          resultsHtml += `</ul>`; // Close the list
+
+          // Add the Scoreboard button
+          resultsHtml += `<button id="scoreboard-btn" style="margin-top: 20px;">Show Scoreboard</button>`;
+          resultDiv.innerHTML = resultsHtml;
+      }
+
+      // --- Initial Setup ---
+      // No initial loadQuestion() needed, it's triggered by the start button
+
+      // --- Style adjustments for radio buttons ---
+      document.querySelectorAll('.answer-row label').forEach(label => {
+          const input = label.querySelector('input[type="radio"]');
+          const text = label.textContent.trim();
+          // Check if span already exists to prevent duplication on potential re-runs
+          if (input && !label.querySelector('span')) {
+              label.innerHTML = ''; // Clear existing content
+              label.appendChild(input);
+              const span = document.createElement('span');
+              span.textContent = text;
+              label.appendChild(span);
+          }
+      });
+
+      answerForm.addEventListener('change', function(event) {
+          if (event.target.type === 'radio' && event.target.name === 'answer') {
+              answerLabels.forEach(label => {
+                  label.style.backgroundColor = '#f0f4fa';
+                  label.style.color = '#1e3c72';
+                  label.style.borderColor = 'transparent';
+              });
+              const checkedLabel = event.target.closest('label');
+              if (checkedLabel) {
+                  checkedLabel.style.backgroundColor = '#2a5298';
+                  checkedLabel.style.color = '#fff';
+                  checkedLabel.style.borderColor = '#1e3c72';
+              }
+          }
+      });
+
+      // --- Event Listener for Scoreboard Button (using event delegation on resultDiv) ---
+      resultDiv.addEventListener('click', function(event) {
+          if (event.target && event.target.id === 'scoreboard-btn') {
+              fetchScoreboard();
+          }
+      });
+
+      // --- Function to Fetch and Display Scoreboard ---
+      async function fetchScoreboard() {
+          const scoreboardDisplay = document.getElementById('scoreboard-display');
+          const scoreboardButton = document.getElementById('scoreboard-btn');
+          scoreboardButton.textContent = 'Loading...'; // Indicate loading
+          scoreboardButton.disabled = true;
+
+          // --- Replace with your actual API endpoint ---
+          // Placeholder URL - Expects JSON like:
+          // [{ name: 'Participant1234', totalQuestions: 10, correctAnswers: 6, userAnswers: ['Human','Ai',...], actualAnswers: ['Human','Human',...] }, ...]
+          const apiEndpoint = 'https://gc0w2az8w6.execute-api.us-east-1.amazonaws.com/fetch_data_from_table_prod_stage/scoreboard_top10_fetch';
+          // ---------------------------------------------
+           try {
+              // Fetch data from the actual API endpoint
+              const response = await fetch(apiEndpoint);
+              if (!response.ok) {
+                  throw new Error(`HTTP error! Status: ${response.status}`);
+              }
+              const scores = await response.json(); // Assuming API returns JSON like [{rank: 1, name: 'UserA', score: 9}, ...]
+
+              // --- MOCK DATA (Remove this block when using real API) ---
+              // const scores = [
+              //     { name: 'Participant1234', totalQuestions: 10, correctAnswers: 6, userAnswers: ['Human','Ai','Human','Ai','Human','Ai','Human','Ai','Human','Human'], actualAnswers: ['Human','Human','Human','Human','Human','Human','Ai','Ai','Ai','Ai'] },
+              //     { name: 'Participant5678', totalQuestions: 10, correctAnswers: 8, userAnswers: ['Human','Human','Human','Ai','Human','Human','Ai','Ai','Ai','Ai'], actualAnswers: ['Human','Human','Human','Human','Human','Human','Ai','Ai','Ai','Ai'] }
+              // ];
+              // --- END MOCK DATA ---
+
+              if (!scores || scores.length === 0) {
+                  scoreboardDisplay.innerHTML = `<p style="text-align: center;">No scoreboard data available yet.</p>`;
+                  scoreboardDisplay.style.display = 'block';
+                  scoreboardButton.style.display = 'none'; // Hide button if no data
+                  return; // Exit the function
+              }
+
+              // Determine the number of questions from the first entry (assuming all have the same)
+              const numQuestions = scores[0].totalQuestions || 0;
+
+              let tableHtml = `<h3>Detailed Scoreboard</h3>
+                               <table id="scoreboard-table">
+                                 <thead>
+                                   <tr>
+                                     <th>Participant</th>
+                                     <th>Total Questions</th>
+                                     <th>Correct Answers</th>
+                                     ${Array.from({ length: numQuestions }, (_, i) => `<th>User Ans ${i + 1}</th>`).join('')}
+                                     ${Array.from({ length: numQuestions }, (_, i) => `<th>Actual Ans ${i + 1}</th>`).join('')}
+                                   </tr>
+                                 </thead>
+                                 <tbody>`;
+
+              scores.forEach(entry => { 
+                  tableHtml += `<tr>
+                                  <td>${entry.name || 'Anonymous'}</td>
+                                  <td>${entry.totalQuestions !== undefined ? entry.totalQuestions : '-'}</td>
+                                  <td>${entry.correctAnswers !== undefined ? entry.correctAnswers : '-'}</td>
+                                  ${Array.from({ length: numQuestions }, (_, i) => `<td>${entry.userAnswers?.[i] || '-'}</td>`).join('')}
+                                  ${Array.from({ length: numQuestions }, (_, i) => `<td>${entry.actualAnswers?.[i] || '-'}</td>`).join('')}
+                                </tr>`;
+              });
+
+              tableHtml += `</tbody></table>`;
+              scoreboardDisplay.innerHTML = tableHtml; 
+              scoreboardDisplay.style.display = 'block'; // Show the scoreboard section
+              scoreboardButton.style.display = 'none'; // Hide the button after loading
+
+          } catch (error) {
+              console.error('Error fetching scoreboard:', error);
+              scoreboardDisplay.innerHTML = `<p style="color: red; text-align: center;">Could not load scoreboard. ${error.message}</p>`;
+              scoreboardDisplay.style.display = 'block';
+              scoreboardButton.textContent = 'Retry Scoreboard'; // Allow retry
+              scoreboardButton.disabled = false;
+          }
+      }
+    </script>
+</body>
+</html>
