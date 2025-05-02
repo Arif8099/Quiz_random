@@ -455,7 +455,7 @@
               }
 
               // Determine the number of questions from the first entry (assuming all have the same)
-              const numQuestions = scores[0].totalQuestions || 0;
+              const numQuestions = scores[0].total_questions || 0; // Use the field name from API data
 
               let tableHtml = `<h3>Detailed Scoreboard</h3>
                                <table id="scoreboard-table">
@@ -470,13 +470,16 @@
                                  </thead>
                                  <tbody>`;
 
-              scores.forEach(entry => { 
+              scores.forEach(entry => {
+                  // Access data using the field names from the API response
                   tableHtml += `<tr>
                                   <td>${entry.name || 'Anonymous'}</td>
-                                  <td>${entry.totalQuestions !== undefined ? entry.totalQuestions : '-'}</td>
-                                  <td>${entry.correctAnswers !== undefined ? entry.correctAnswers : '-'}</td>
-                                  ${Array.from({ length: numQuestions }, (_, i) => `<td>${entry.userAnswers?.[i] || '-'}</td>`).join('')}
-                                  ${Array.from({ length: numQuestions }, (_, i) => `<td>${entry.actualAnswers?.[i] || '-'}</td>`).join('')}
+                                  <td>${entry.total_questions !== undefined ? entry.total_questions : '-'}</td>
+                                  <td>${entry.correct_answers !== undefined ? entry.correct_answers : '-'}</td>
+                                  ${/* Loop to generate User Answer cells using dynamic field names */ ''}
+                                  ${Array.from({ length: numQuestions }, (_, i) => `<td>${entry['user_answer_' + (i + 1)] || '-'}</td>`).join('')}
+                                  ${/* Loop to generate Actual Answer cells using dynamic field names */ ''}
+                                  ${Array.from({ length: numQuestions }, (_, i) => `<td>${entry['actual_answer_' + (i + 1)] || '-'}</td>`).join('')}
                                 </tr>`;
               });
 
