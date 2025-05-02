@@ -1,0 +1,7 @@
+{
+  "name": "Participant1234",
+  "total_questions": 10,
+  "correct_answers": 6,
+  "user_answers": ["Human", "Ai", "Human", "Ai", "Human", "Ai", "Human", "Ai", "Human", "Human"],
+  "actual_answers": ["Human", "Human", "Human", "Human", "Human", "Human", "Ai", "Ai", "Ai", "Ai"]
+}
