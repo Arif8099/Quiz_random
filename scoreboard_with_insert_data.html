@@ -388,11 +388,11 @@
               correct_answers: correct
           };
 
-          // Add individual answers dynamically
-          userAnswers.forEach((answerDetail, index) => {
-              payload[`user_answer_${index + 1}`] = answerDetail.userAnswer;
-              payload[`actual_answer_${index + 1}`] = answerDetail.correctAnswer;
-          });
+          // Always send 10 user/actual answer fields, fill with empty string if not present
+          for (let i = 0; i < 10; i++) {
+              payload[`user_answer_${i + 1}`] = userAnswers[i] ? userAnswers[i].userAnswer : '';
+              payload[`actual_answer_${i + 1}`] = userAnswers[i] ? userAnswers[i].correctAnswer : '';
+          }
 
           console.log("Sending payload:", JSON.stringify(payload, null, 2)); // Log payload for debugging
 
