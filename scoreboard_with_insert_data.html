@@ -379,26 +379,30 @@
 
       // --- Function to Send Results to API ---
       async function sendResultsToAPI() {
-          const apiEndpoint = 'https://e1lmhvfyvd.execute-api.us-east1.amazonaws.com/insertTableRowStage/insertTableRowPost'; // Your API endpoint
+          const apiEndpoint = 'https://e1lmhvfyvd.execute-api.us-east1.amazonaws.com/insertWithCorsAllowed/insertTableRowPost'; // Your API endpoint
 
-          // Prepare the payload
+          // Prepare the payload base
           const payload = {
               name: anonymousUserId,
               total_questions: audioFiles.length,
-              correct_answers: correct
+              correct_answers: correct,
+              user_answers: [], // Initialize as empty list
+              actual_answers: [] // Initialize as empty list
           };
 
-          // Always send 10 user/actual answer fields, fill with empty string if not present
+          // Populate the lists, ensuring 10 entries, fill with empty string if not present
           for (let i = 0; i < 10; i++) {
               let userAns = userAnswers[i] ? userAnswers[i].userAnswer : '';
               let actualAns = userAnswers[i] ? userAnswers[i].correctAnswer : '';
+
               // Capitalize first letter if value is 'human' or 'ai'
               if (userAns.toLowerCase() === 'human') userAns = 'Human';
               else if (userAns.toLowerCase() === 'ai') userAns = 'Ai';
               if (actualAns.toLowerCase() === 'human') actualAns = 'Human';
               else if (actualAns.toLowerCase() === 'ai') actualAns = 'Ai';
-              payload[`user_answer_${i + 1}`] = userAns;
-              payload[`actual_answer_${i + 1}`] = actualAns;
+
+              payload.user_answers.push(userAns); // Add to the list
+              payload.actual_answers.push(actualAns); // Add to the list
           }
 
           console.log("Sending payload:", JSON.stringify(payload, null, 2)); // Log payload for debugging
@@ -413,9 +417,13 @@
               });
 
               if (!response.ok) {
-                  throw new Error(`API request failed with status ${response.status}: ${await response.text()}`);
+                  // Log the error response body for more details
+                  const errorBody = await response.text();
+                  console.error(`API Error Response Body: ${errorBody}`);
+                  throw new Error(`API request failed with status ${response.status}: ${errorBody}`);
               }
-              console.log('Quiz results successfully sent to API.');
+              const responseData = await response.json(); // Try to parse JSON response
+              console.log('API Response:', responseData); // Log success response
           } catch (error) {
               console.error('Error sending quiz results to API:', error);
               // Optional: Display an error message to the user in the results area
