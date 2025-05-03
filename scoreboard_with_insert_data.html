@@ -390,8 +390,15 @@
 
           // Always send 10 user/actual answer fields, fill with empty string if not present
           for (let i = 0; i < 10; i++) {
-              payload[`user_answer_${i + 1}`] = userAnswers[i] ? userAnswers[i].userAnswer : '';
-              payload[`actual_answer_${i + 1}`] = userAnswers[i] ? userAnswers[i].correctAnswer : '';
+              let userAns = userAnswers[i] ? userAnswers[i].userAnswer : '';
+              let actualAns = userAnswers[i] ? userAnswers[i].correctAnswer : '';
+              // Capitalize first letter if value is 'human' or 'ai'
+              if (userAns.toLowerCase() === 'human') userAns = 'Human';
+              else if (userAns.toLowerCase() === 'ai') userAns = 'Ai';
+              if (actualAns.toLowerCase() === 'human') actualAns = 'Human';
+              else if (actualAns.toLowerCase() === 'ai') actualAns = 'Ai';
+              payload[`user_answer_${i + 1}`] = userAns;
+              payload[`actual_answer_${i + 1}`] = actualAns;
           }
 
           console.log("Sending payload:", JSON.stringify(payload, null, 2)); // Log payload for debugging
